@@ -75,7 +75,7 @@ namespace Benday.InvoiceApp.WebUi.Controllers
             }
             else
             {
-                entity = _InvoiceRepository.GetById(id.Value);
+                entity = _InvoiceRepository.GetById(id.Value);                
             }
 
             if (entity == null)
@@ -84,7 +84,18 @@ namespace Benday.InvoiceApp.WebUi.Controllers
             }
             else
             {
+                if (entity.InvoiceLines == null)
+                {
+                    entity.InvoiceLines = new List<InvoiceLine>();
+                }
+
                 model.Invoice = entity;
+                model.Id = entity.Id;
+
+                if (entity.OwnerClientIDFK != 0)
+                {
+                    model.ClientId = entity.OwnerClientIDFK.ToString();
+                }
             }
 
             model.Clients = GetClients();
