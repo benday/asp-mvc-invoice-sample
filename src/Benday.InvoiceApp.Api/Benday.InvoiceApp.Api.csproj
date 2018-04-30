@@ -16,4 +16,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Benday.DataAccess\Benday.DataAccess.csproj" />
   </ItemGroup>
+  <PropertyGroup>
+    <GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>
+  </PropertyGroup>
 </Project>

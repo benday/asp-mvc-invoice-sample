@@ -4,11 +4,12 @@ using System.Collections.Generic;
 
 namespace Benday.DataAccess.SqlServer
 {
-    public abstract class SqlEntityFrameworkRepositoryBase<T> :
-        IDisposable where T : class, IInt32Identity
+    public abstract class SqlEntityFrameworkRepositoryBase<TEntity, TDbContext> :
+        IDisposable where TEntity : class, IInt32Identity
+        where TDbContext : DbContext
     {
         public SqlEntityFrameworkRepositoryBase(
-            DbContext context)
+            TDbContext context)
         {
             if (context == null)
                 throw new ArgumentNullException("context", "context is null.");
@@ -21,9 +22,9 @@ namespace Benday.DataAccess.SqlServer
             ((IDisposable)_Context).Dispose();
         }
 
-        private DbContext _Context;
+        private TDbContext _Context;
 
-        protected DbContext Context
+        protected TDbContext Context
         {
             get
             {
@@ -31,7 +32,7 @@ namespace Benday.DataAccess.SqlServer
             }
         }
 
-        protected void VerifyItemIsAddedOrAttachedToDbSet(DbSet<T> dbset, T item)
+        protected void VerifyItemIsAddedOrAttachedToDbSet(DbSet<TEntity> dbset, TEntity item)
         {
             if (item == null)
             {

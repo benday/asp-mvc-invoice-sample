@@ -6,7 +6,7 @@ using System;
 namespace Benday.InvoiceApp.Api
 {
     public class InvoiceRepository : 
-        SqlEntityFrameworkCrudRepositoryBase<Invoice>, IRepository<Invoice>
+        SqlEntityFrameworkCrudRepositoryBase<Invoice, InvoiceDbContext>, IRepository<Invoice>
     {
 
         public InvoiceRepository(

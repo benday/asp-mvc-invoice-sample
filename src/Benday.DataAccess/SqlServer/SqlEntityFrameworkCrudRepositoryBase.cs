@@ -6,22 +6,23 @@ using System.Text;
 
 namespace Benday.DataAccess.SqlServer
 {
-    public abstract class SqlEntityFrameworkCrudRepositoryBase<T> :
-        SqlEntityFrameworkRepositoryBase<T>, IRepository<T>
-        where T : class, IInt32Identity
+    public abstract class SqlEntityFrameworkCrudRepositoryBase<TEntity, TDbContext> :
+        SqlEntityFrameworkRepositoryBase<TEntity, TDbContext>, IRepository<TEntity>
+        where TEntity : class, IInt32Identity
+        where TDbContext : DbContext
     {
         public SqlEntityFrameworkCrudRepositoryBase(
-            DbContext context) : base(context)
+            TDbContext context) : base(context)
         {
 
         }
 
-        protected abstract DbSet<T> EntityDbSet
+        protected abstract DbSet<TEntity> EntityDbSet
         {
             get;
         }
 
-        public virtual void Delete(T deleteThis)
+        public virtual void Delete(TEntity deleteThis)
         {
             if (deleteThis == null)
                 throw new ArgumentNullException("deleteThis", "deleteThis is null.");
@@ -38,12 +39,12 @@ namespace Benday.DataAccess.SqlServer
             Context.SaveChanges();
         }
 
-        public virtual IList<T> GetAll()
+        public virtual IList<TEntity> GetAll()
         {
             return EntityDbSet.ToList();
         }
 
-        public virtual T GetById(int id)
+        public virtual TEntity GetById(int id)
         {
             return (
                 from temp in EntityDbSet
@@ -52,7 +53,7 @@ namespace Benday.DataAccess.SqlServer
                 ).FirstOrDefault();
         }
 
-        public virtual void Save(T saveThis)
+        public virtual void Save(TEntity saveThis)
         {
             if (saveThis == null)
                 throw new ArgumentNullException("saveThis", "saveThis is null.");
