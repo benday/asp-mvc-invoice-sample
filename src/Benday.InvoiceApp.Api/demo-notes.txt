@@ -1,0 +1,5 @@
+CodeRush template commands: dbc, dbs, dbcf  
+Workaround for framework error from ef core migrations-- to csproj file 
+<PropertyGroup> 
+ <GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles> 
+</PropertyGroup> 
