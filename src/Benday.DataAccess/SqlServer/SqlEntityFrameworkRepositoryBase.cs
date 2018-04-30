@@ -46,7 +46,7 @@ namespace Benday.DataAccess.SqlServer
                 }
                 else
                 {
-                    var entry = _Context.Entry(item);
+                    var entry = _Context.Entry<TEntity>(item);
 
                     if (entry.State == EntityState.Detached)
                     {

@@ -2,8 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Benday.DataAccess;
+using Benday.InvoiceApp.Api;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -21,7 +24,19 @@ namespace Benday.InvoiceApp.WebUi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            RegisterTypes(services);
+
             services.AddMvc();
+        }
+
+        void RegisterTypes(IServiceCollection services)
+        {
+            services.AddDbContext<InvoiceDbContext>(options =>
+                options.UseSqlServer(Configuration.GetConnectionString("default")));
+
+            // services.AddTransient<InvoiceDbContext, InvoiceDbContext>();
+
+            services.AddTransient<IRepository<Client>, ClientsRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
