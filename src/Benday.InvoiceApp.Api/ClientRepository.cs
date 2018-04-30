@@ -5,11 +5,11 @@ using System;
 
 namespace Benday.InvoiceApp.Api
 {
-    public class ClientsRepository :
+    public class ClientRepository :
         SqlEntityFrameworkCrudRepositoryBase<Client, InvoiceDbContext>, IRepository<Client>
     {
 
-        public ClientsRepository(
+        public ClientRepository(
             InvoiceDbContext context) :
             base(context)
         {

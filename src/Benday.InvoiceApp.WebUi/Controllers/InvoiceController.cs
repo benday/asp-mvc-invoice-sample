@@ -2,17 +2,42 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Benday.DataAccess;
+using Benday.InvoiceApp.Api;
+using Benday.InvoiceApp.WebUi.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace Benday.InvoiceApp.WebUi.Controllers
 {
     public class InvoiceController : Controller
     {
+        private IRepository<Client> _ClientRepository;
+        private IRepository<Invoice> _InvoiceRepository;
+        public InvoiceController(IRepository<Client> clientRepository, 
+            IRepository<Invoice> invoiceRepository)
+        {
+            if (invoiceRepository == null)
+            {
+                throw new ArgumentNullException(nameof(invoiceRepository), $"{nameof(invoiceRepository)} is null.");
+            }
+
+            if (clientRepository == null)
+            {
+                throw new ArgumentNullException(nameof(clientRepository), $"{nameof(clientRepository)} is null.");
+            }
+
+            _ClientRepository = clientRepository;
+            _InvoiceRepository = invoiceRepository;
+        }
+
         // GET: Invoice
         public ActionResult Index()
         {
-            return View();
+            var invoices = _InvoiceRepository.GetAll();
+
+            return View(invoices);
         }
 
         // GET: Invoice/Details/5
@@ -24,47 +49,130 @@ namespace Benday.InvoiceApp.WebUi.Controllers
         // GET: Invoice/Create
         public ActionResult Create()
         {
-            return View();
-        }
-
-        // POST: Invoice/Create
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
-        {
-            try
-            {
-                // TODO: Add insert logic here
-
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
+            return RedirectToAction("Edit", new { id = WebUiConstants.ID_FOR_CREATE_NEW_ENTITY });
         }
 
         // GET: Invoice/Edit/5
-        public ActionResult Edit(int id)
+        public ActionResult Edit(int? id)
         {
-            return View();
+            if (id == null)
+            {
+                return new BadRequestResult();
+            }
+
+            var model = new InvoiceViewModel();
+            Invoice entity;
+
+            if (id.Value == WebUiConstants.ID_FOR_CREATE_NEW_ENTITY)
+            {
+                // create new
+                entity = new Invoice();
+
+                entity.Id = WebUiConstants.ID_FOR_CREATE_NEW_ENTITY;
+                entity.InvoiceDate = DateTime.Now;
+                entity.InvoiceLines = new List<InvoiceLine>();
+                entity.InvoiceNumber = DateTime.Now.Ticks.ToString();
+            }
+            else
+            {
+                entity = _InvoiceRepository.GetById(id.Value);
+            }
+
+            if (entity == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                model.Invoice = entity;
+            }
+
+            model.Clients = GetClients();
+
+            return View(model);
+        }
+
+        private List<SelectListItem> GetClients()
+        {
+            var operators = new List<SelectListItem>();
+
+            operators.Add(
+                String.Empty,
+                WebUiConstants.Message_ChooseAClient,
+                true);
+
+            var clients = _ClientRepository.GetAll();
+
+            foreach (var item in clients)
+            {
+                operators.Add(item.Id.ToString(), item.Name, false);
+            }
+
+            return operators;
         }
 
         // POST: Invoice/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        public ActionResult Edit(InvoiceViewModel model)
         {
-            try
+            if (ModelState.IsValid)
             {
-                // TODO: Add update logic here
+                bool isCreateNew = false;
 
-                return RedirectToAction(nameof(Index));
+                Invoice fromEntity = model.Invoice;
+                Invoice toEntity = null;
+
+                if (model.Id == WebUiConstants.ID_FOR_CREATE_NEW_ENTITY)
+                {
+                    isCreateNew = true;
+                    toEntity = new Invoice();
+                }
+                else
+                {
+                    toEntity =
+                        _InvoiceRepository.GetById(model.Id);
+
+                    if (toEntity == null)
+                    {
+                        return new BadRequestObjectResult(
+                            String.Format("Unknown client id '{0}'.", model.Id));
+                    }
+                }
+
+                if (fromEntity == null || toEntity == null)
+                {
+                    return new BadRequestObjectResult("fromEntity or toEntity was null");
+                }
+                else
+                {
+                    toEntity.OwnerClientIDFK = Int32.Parse(model.ClientId);
+
+                    Adapt(fromEntity, toEntity);
+
+                    _InvoiceRepository.Save(toEntity);
+                }
+
+                if (isCreateNew == true)
+                {
+                    model.Id = toEntity.Id;
+
+                    return RedirectToAction("Edit", new { id = toEntity.Id });
+                }
+                else
+                {
+                    return RedirectToAction("Edit");
+                }
             }
-            catch
+            else
             {
-                return View();
+                return View(model);
             }
+        }
+        private void Adapt(Invoice fromValue, Invoice toValue)
+        {
+            toValue.InvoiceDate = fromValue.InvoiceDate;
+            toValue.InvoiceNumber = fromValue.InvoiceNumber;
         }
 
         // GET: Invoice/Delete/5

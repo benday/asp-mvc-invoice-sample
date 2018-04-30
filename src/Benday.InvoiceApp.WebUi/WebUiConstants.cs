@@ -8,5 +8,6 @@ namespace Benday.InvoiceApp.WebUi
     public class WebUiConstants
     {
         public static readonly int ID_FOR_CREATE_NEW_ENTITY = -1;
+        public const string Message_ChooseAClient = "(Choose a client)";
     }
 }

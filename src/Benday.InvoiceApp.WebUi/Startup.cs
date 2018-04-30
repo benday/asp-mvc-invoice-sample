@@ -34,9 +34,8 @@ namespace Benday.InvoiceApp.WebUi
             services.AddDbContext<InvoiceDbContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("default")));
 
-            // services.AddTransient<InvoiceDbContext, InvoiceDbContext>();
-
-            services.AddTransient<IRepository<Client>, ClientsRepository>();
+            services.AddTransient<IRepository<Client>, ClientRepository>();
+            services.AddTransient<IRepository<Invoice>, InvoiceRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

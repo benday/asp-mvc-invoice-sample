@@ -23,10 +23,10 @@ namespace Benday.InvoiceApp.Api
         [DisplayName("Invoice Number")]
         public string InvoiceNumber { get; set; }
 
-        [Required, DatabaseGenerated(DatabaseGeneratedOption.Computed)]
+        // [Required, DatabaseGenerated(DatabaseGeneratedOption.Computed)]
+        [Required]
         [DataType(DataType.Date)]
         [Column(TypeName = "Date")]
-
         [DisplayName("Invoice Date")]
         public DateTime InvoiceDate { get; set; }
 
