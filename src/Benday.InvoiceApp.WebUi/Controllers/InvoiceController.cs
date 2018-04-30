@@ -71,6 +71,9 @@ namespace Benday.InvoiceApp.WebUi.Controllers
                 entity.Id = WebUiConstants.ID_FOR_CREATE_NEW_ENTITY;
                 entity.InvoiceDate = DateTime.Now;
                 entity.InvoiceLines = new List<InvoiceLine>();
+
+                AddInvoiceLines(entity);
+
                 entity.InvoiceNumber = DateTime.Now.Ticks.ToString();
             }
             else
@@ -101,6 +104,31 @@ namespace Benday.InvoiceApp.WebUi.Controllers
             model.Clients = GetClients();
 
             return View(model);
+        }
+
+        private void AddInvoiceLines(Invoice entity)
+        {
+            if (entity.InvoiceLines == null)
+            {
+                entity.InvoiceLines = new List<InvoiceLine>();
+            }
+
+            entity.InvoiceLines.Add(CreateInvoiceLine(1));
+            entity.InvoiceLines.Add(CreateInvoiceLine(2));
+            entity.InvoiceLines.Add(CreateInvoiceLine(3));
+            entity.InvoiceLines.Add(CreateInvoiceLine(4));
+        }
+
+        private InvoiceLine CreateInvoiceLine(int lineNumber)
+        {
+            var temp = new InvoiceLine();
+
+            temp.ItemDescription = String.Format("Item Desc #{0}", lineNumber);
+            temp.ItemName = String.Format("Item Name #{0}", lineNumber);
+            temp.Quantity = lineNumber;
+            temp.Value = lineNumber * 100;
+
+            return temp;
         }
 
         private List<SelectListItem> GetClients()

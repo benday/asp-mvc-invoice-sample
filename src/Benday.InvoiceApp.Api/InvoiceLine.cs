@@ -29,7 +29,7 @@ namespace Benday.InvoiceApp.Api
         public int Quantity { get; set; }
 
         [Required]
-        [DisplayFormat(DataFormatString = "{0:C}", ApplyFormatInEditMode = true)]
+        // [DisplayFormat(DataFormatString = "{0:C}", ApplyFormatInEditMode = true)]
         public decimal Value { get; set; }
 
         [ForeignKey("ParentInvoice")]

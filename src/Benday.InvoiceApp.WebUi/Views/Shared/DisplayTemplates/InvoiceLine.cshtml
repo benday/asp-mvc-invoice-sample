@@ -1,0 +1,18 @@
+﻿@model Benday.InvoiceApp.Api.InvoiceLine
+
+<tr>
+    <td>
+        @Html.HiddenFor(model => model.Id)
+        @Html.DisplayFor(model => model.Quantity, "form-control")
+    </td>
+    <td>
+        @Html.DisplayFor(model => model.ItemName, "form-control")
+    </td>
+    <td>
+        @Html.DisplayFor(model => model.ItemDescription, "form-control")
+    </td>
+    <td>
+        @Html.DisplayFor(model => model.Value, "form-control")
+    </td>
+</tr>
+
