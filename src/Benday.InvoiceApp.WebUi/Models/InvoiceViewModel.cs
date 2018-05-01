@@ -14,6 +14,7 @@ namespace Benday.InvoiceApp.WebUi.Models
         [Display(Name = "Clients")]
         public List<SelectListItem> Clients { get; set; }
 
+        [Required]
         [Display(Name = "Client Id")]
         public string ClientId { get; set; }
 

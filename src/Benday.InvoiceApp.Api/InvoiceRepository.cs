@@ -2,6 +2,7 @@
 using Benday.DataAccess.SqlServer;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Linq;
 
 namespace Benday.InvoiceApp.Api
 {
@@ -14,6 +15,15 @@ namespace Benday.InvoiceApp.Api
             base(context)
         {
 
+        }
+
+        public override Invoice GetById(int id)
+        {
+            return (
+                from temp in EntityDbSet.Include(d => d.InvoiceLines)
+                where temp.Id == id
+                select temp
+                ).FirstOrDefault();
         }
 
         protected override DbSet<Invoice> EntityDbSet
