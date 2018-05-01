@@ -113,10 +113,14 @@ namespace Benday.InvoiceApp.WebUi.Controllers
                 entity.InvoiceLines = new List<InvoiceLine>();
             }
 
+            /*
+             * CREATE SAMPLE INVOICE LINES
+             * 
             entity.InvoiceLines.Add(CreateInvoiceLine(1));
             entity.InvoiceLines.Add(CreateInvoiceLine(2));
             entity.InvoiceLines.Add(CreateInvoiceLine(3));
             entity.InvoiceLines.Add(CreateInvoiceLine(4));
+            */
         }
 
         private InvoiceLine CreateInvoiceLine(int lineNumber)
