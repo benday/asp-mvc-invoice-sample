@@ -9,80 +9,124 @@
 {
     @Html.AntiForgeryToken()
 
-<div class="form-horizontal">
-    <h4>Invoice</h4>
-    <hr />
-    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-    @Html.HiddenFor(model => model.Id)
-
-    <div class="form-group">
-        @Html.LabelFor(model => model.Invoice.InvoiceNumber, htmlAttributes: new { @class = "control-label col-md-2" })
-        <div class="col-md-10">
-            @Html.EditorFor(model => model.Invoice.InvoiceNumber, new { htmlAttributes = new { @class = "form-control" } })
-            @Html.ValidationMessageFor(model => model.Invoice.InvoiceNumber, "", new { @class = "text-danger" })
-        </div>
-    </div>
-
-    <div class="form-group">
-        @Html.LabelFor(model => model.Invoice.InvoiceDate, htmlAttributes: new { @class = "control-label col-md-2" })
-        <div class="col-md-10">
-            @Html.EditorFor(model => model.Invoice.InvoiceDate, new { htmlAttributes = new { @class = "form-control" } })
-            @Html.ValidationMessageFor(model => model.Invoice.InvoiceDate, "", new { @class = "text-danger" })
-        </div>
-    </div>
-
-    <div class="form-group">
-        <label asp-for="ClientId" class="control-label"></label>
-        <select asp-for="ClientId" asp-items="Model.Clients" class="form-control"></select>
-        <span asp-validation-for="ClientId" class="text-danger"></span>
-    </div>
-
-    @*<div class="form-group">
-        @Html.LabelFor(model => model.OwnerClientIDFK, "OwnerClientIDFK", htmlAttributes: new { @class = "control-label col-md-2" })
-        <div class="col-md-10">
-            @Html.DropDownList("OwnerClientIDFK", null, htmlAttributes: new { @class = "form-control" })
-            @Html.ValidationMessageFor(model => model.OwnerClientIDFK, "", new { @class = "text-danger" })
-        </div>
-    </div>*@
-
-    <div class="form-group">
-        <h2>Invoice Lines</h2>
+    <div class="form-horizontal">
+        <h4>Invoice</h4>
         <hr />
-        
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        @Html.HiddenFor(model => model.Id)
 
-        <div class="row">
-            <div class="col-md-8">
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>Quantity</th>
-                            <th>Item Name</th>
-                            <th>Description</th>
-                            <th>Unit Value</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @Html.EditorFor(model => model.Invoice.InvoiceLines)
-                    </tbody>
+        <div class="form-group">
+            @Html.LabelFor(model => model.Invoice.InvoiceNumber, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Invoice.InvoiceNumber, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Invoice.InvoiceNumber, "", new { @class = "text-danger" })
+            </div>
+        </div>
 
-                </table>
+        <div class="form-group">
+            @Html.LabelFor(model => model.Invoice.InvoiceDate, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Invoice.InvoiceDate, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Invoice.InvoiceDate, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="ClientId" class="control-label"></label>
+            <select asp-for="ClientId" asp-items="Model.Clients" class="form-control"></select>
+            <span asp-validation-for="ClientId" class="text-danger"></span>
+        </div>
+
+        @*<div class="form-group">
+                @Html.LabelFor(model => model.OwnerClientIDFK, "OwnerClientIDFK", htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.DropDownList("OwnerClientIDFK", null, htmlAttributes: new { @class = "form-control" })
+                    @Html.ValidationMessageFor(model => model.OwnerClientIDFK, "", new { @class = "text-danger" })
+                </div>
+            </div>*@
+
+        <div class="form-group">
+            <h2>Invoice Lines</h2>
+            <hr />
+
+
+            <div class="row">
+                <div class="col-md-8">
+                    @Html.Hidden("InvoiceLineCount", Model.Invoice.InvoiceLines.Count)
+                    <table class="table" id="TableInvoiceLines">
+                        <thead>
+                            <tr>
+                                <th>Quantity</th>
+                                <th>Item Name</th>
+                                <th>Description</th>
+                                <th>Unit Value</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @Html.EditorFor(model => model.Invoice.InvoiceLines)
+                        </tbody>
+                    </table>
+
+                    <a id="linkAddInvoiceLine" onclick="addInvoiceLine();">add line</a>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Save" class="btn btn-default" />
             </div>
         </div>
 
     </div>
-
-    <div class="form-group">
-        <div class="col-md-offset-2 col-md-10">
-            <input type="submit" value="Save" class="btn btn-default" />
-        </div>
-    </div>
-
-</div>
 }
 
 <div>
     @Html.ActionLink("Back to List", "Index")
 </div>
+
+<script id="templateRow" type="text/x-custom-template">
+    @{ 
+        var tempEmptyInvoiceLine = new Benday.InvoiceApp.Api.InvoiceLine();
+    }
+
+    <tr>
+        <td>
+            <input data-val="true" data-val-required="The Id field is required." id="Invoice_InvoiceLines_%%ROWNUMBER%%__Id" name="Invoice.InvoiceLines[%%ROWNUMBER%%].Id" type="hidden" value="0" />
+            <input class="text-box single-line" data-val="true" data-val-required="The Quantity field is required." id="Invoice_InvoiceLines_%%ROWNUMBER%%__Quantity" name="Invoice.InvoiceLines[%%ROWNUMBER%%].Quantity" type="number" value="0" />
+        </td>
+        <td>
+            <input class="text-box single-line" data-val="true" data-val-length="The field Item must be a string with a maximum length of 255." data-val-length-max="255" data-val-required="The Item field is required." id="Invoice_InvoiceLines_%%ROWNUMBER%%__ItemName" name="Invoice.InvoiceLines[%%ROWNUMBER%%].ItemName" type="text" value="" />
+        </td>
+        <td>
+            <input class="text-box single-line" id="Invoice_InvoiceLines_%%ROWNUMBER%%__ItemDescription" name="Invoice.InvoiceLines[%%ROWNUMBER%%].ItemDescription" type="text" value="" />
+        </td>
+        <td>
+            <input class="text-box single-line" data-val="true" data-val-number="The field Value must be a number." data-val-required="The Value field is required." id="Invoice_InvoiceLines_%%ROWNUMBER%%__Value" name="Invoice.InvoiceLines[%%ROWNUMBER%%].Value" type="text" value="0.00" />
+        </td>
+    </tr>    
+</script>
+
+<script>
+    function addInvoiceLine() {
+
+        var hiddenLineCountControl = $('#InvoiceLineCount');
+        var nextRowIndex = hiddenLineCountControl.val();
+
+        var templateRow = $('#templateRow').html();
+
+        templateRow = templateRow.replace(/%%ROWNUMBER%%/g, nextRowIndex);
+
+        var table = $('#TableInvoiceLines tbody');
+        table.append(templateRow)
+
+        nextRowIndex++;
+
+        hiddenLineCountControl.val(nextRowIndex);
+    }
+</script>
+
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
